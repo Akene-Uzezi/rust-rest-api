@@ -1,5 +1,5 @@
 use axum::{
-    Router,
+    Json, Router,
     extract::{Path, State},
     http::StatusCode,
     routing::{get, post},
@@ -16,7 +16,7 @@ struct UserPayload {
 
 #[derive(Serialize, FromRow)]
 struct User {
-    id: u32,
+    id: i32,
     name: String,
     email: String,
 }
@@ -44,4 +44,16 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
     println!("Server running on port 8080");
     axum::serve(listener, app).await.unwrap();
+}
+
+async fn root() -> &'static str {
+    "Welcome to the User management API"
+}
+
+async fn list_users(State(pool): State<PgPool>) -> Result<Json<Vec<User>>, StatusCode> {
+    sqlx::query_as::<_, User>("SELECT * FROM users")
+        .fetch_all(&pool)
+        .await
+        .map(Json)
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
 }
