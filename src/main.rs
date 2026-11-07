@@ -20,4 +20,7 @@ struct User {
     email: String,
 }
 
-fn main() {}
+#[tokio::main]
+async fn main() {
+    let db_url = env::var("DATABASE_URL").expect("Database url must be set");
+}
