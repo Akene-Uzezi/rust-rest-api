@@ -7,4 +7,17 @@ use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, PgPool, postgres::PgPoolOptions};
 use std::env;
 
+#[derive(Deserialize)]
+struct UserPayload {
+    name: String,
+    email: String,
+}
+
+#[derive(Serialize, FromRow)]
+struct User {
+    id: u32,
+    name: String,
+    email: String,
+}
+
 fn main() {}
